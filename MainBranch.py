@@ -543,9 +543,12 @@ def BatchAdmin(operation,batch):
             # print('All ok')
             UsernameData = api.username_info(username)
             userID = UsernameData["user"]["pk"]
-            Following = api.user_following(userID, rank_token=uuid.uuid4())
+            tk = uuid.uuid4()
+            Following = api.user_following(userID, rank_token=str(tk))
             lnFollowing = len(Following["users"])
-            if lnFollowing > 4000 & operation==2:
+
+            if lnFollowing > 4000 and operation==2:
+                print("switched")
                 # If I have more than 4k following I will unfollow instead of following
                 operation=4
             if operation == 1:
@@ -587,7 +590,6 @@ def BatchAdmin(operation,batch):
                 lng = len(PTFF[typ])
                 k = random.randint(0,lng-1)
                 p = api.username_feed(PTFF[typ][k])
-                print(PTFF[typ][k], "-=----------------------")
                 idsList = []
                 for o in range (0, len( p['items'])):
                     id = p['items'][o]['id']
@@ -621,14 +623,16 @@ def BatchAdmin(operation,batch):
             elif operation == 4:
                 UsernameData = api.username_info(username)
                 userID = UsernameData["user"]["pk"]
-                Following = api.user_following(userID, rank_token=uuid.uuid4())
+                ud = uuid.uuid4()
+                ud = str(ud)
+                Following = api.user_following(userID, rank_token=ud)
                 lnFollowing = len(Following["users"])
                 toUnfollow = 50
                 for i in range(0, lnFollowing):
                     id = Following["users"][i]["pk"]
                     api.friendships_destroy(user_id=id)
                     toUnfollow -= 1
-                    print(toUnfollow)
+                    #print(toUnfollow)
                     if toUnfollow <= 0:
                         break
                     time.sleep(1.5)
@@ -652,6 +656,7 @@ if __name__ == '__main__':
     operation = input()
     operation=int(operation)
     batchnr = len(us)
+    batchnr=1
     #MasterChoice -> Selenium implementation
     #BatchAdmin -> Api implementation
 
