@@ -7,6 +7,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 import os.path
 import multiprocessing
+import uuid
 from PIL import Image
 from os import path
 import wget
@@ -23,8 +24,7 @@ from Vars import usernames as us, passwords as ps, HostPages as Hp
 # from Vars import LogOXpath as LogOXp
 from Vars import PagesToFollowFrom as PTFF
 from Vars import PageTypes as PT
-from Vars import PageToFollowFromId as PTFFI
-from Vars import HostPagesId as HPI
+
 
 # pentru orice disperat se uita aici, nu nu am pus parolele direct aici
 # si nu le am dat commit ,
@@ -488,6 +488,9 @@ def BatchAdmin(operation,batch):
     logger.setLevel(logging.WARNING)
     device_id = None
     for w in range(0,10):
+        at = time.localtime()
+        current_time = time.strftime("%H:%M:%S", at)
+        print(current_time, " start ----------------------------------- ")
         for i in range(0,length):
 
             username = us[batch][i]
@@ -505,8 +508,6 @@ def BatchAdmin(operation,batch):
                     api = Client(
 
                         username, password,
-                        proxy="http://176.9.160.59:5678",
-
                         on_login=lambda x: onlogin_callback(x, settings_file))
                 else:
                     with open(settings_file) as file_data:
@@ -540,8 +541,16 @@ def BatchAdmin(operation,batch):
             # assert len(results.get('items', [])) > 0
             #
             # print('All ok')
-            print(batch)
+            UsernameData = api.username_info(username)
+            userID = UsernameData["user"]["pk"]
+            Following = api.user_following(userID, rank_token=uuid.uuid4())
+            lnFollowing = len(Following["users"])
+            if lnFollowing > 4000 & operation==2:
+                # If I have more than 4k following I will unfollow instead of following
+                operation=4
             if operation == 1:
+                #POSTING ATTEMPT DOES NOT WORK
+
                 print("postari")
                 p = api.username_feed(Hp[batch][i])
                 id = p['items'][0]['id']
@@ -573,6 +582,7 @@ def BatchAdmin(operation,batch):
                 # urllib.request.urlretrieve(src, "00000001.jpg")
 
             elif operation == 2:
+                #FOLLOWING USERS FROM THE POOL OF ACCOUNTS
 
                 lng = len(PTFF[typ])
                 k = random.randint(0,lng-1)
@@ -600,13 +610,39 @@ def BatchAdmin(operation,batch):
                     if isf == False & isp == True & ot == False:
                         api.friendships_create(idsList[i])
                         ToFollow-=1
-                        print(ToFollow)
+                        #print(ToFollow)
                         time.sleep(1+random.random())
                     if ToFollow<=0:
                         break
 
             elif operation == 3:
+                #UPDATE STATS NOT IMPLEMENTED YET
                 print("")
+            elif operation == 4:
+                UsernameData = api.username_info(username)
+                userID = UsernameData["user"]["pk"]
+                Following = api.user_following(userID, rank_token=uuid.uuid4())
+                lnFollowing = len(Following["users"])
+                toUnfollow = 50
+                for i in range(0, lnFollowing):
+                    id = Following["users"][i]["pk"]
+                    api.friendships_destroy(user_id=id)
+                    toUnfollow -= 1
+                    print(toUnfollow)
+                    if toUnfollow <= 0:
+                        break
+                    time.sleep(1.5)
+            else:
+                print("testing area")
+                #TESTING AREA !!!!!!!!!!!!!!!!
+
+
+
+
+        at = time.localtime()
+        current_time = time.strftime("%H:%M:%S", at)
+        print(current_time, " end ----------------------------------- ")
+
         time.sleep(2700+random.randint(0,5)*60)
 
 
@@ -616,7 +652,6 @@ if __name__ == '__main__':
     operation = input()
     operation=int(operation)
     batchnr = len(us)
-    #batchnr = 1
     #MasterChoice -> Selenium implementation
     #BatchAdmin -> Api implementation
 
@@ -632,6 +667,8 @@ if __name__ == '__main__':
         from Post_Protocol import Post
         global Post
         func = MasterChoice
+    else:
+        func = BatchAdmin
     p=[]
     for i in range(0,batchnr):
         p.append(multiprocessing.Process(target=func, args=(operation, i)))
