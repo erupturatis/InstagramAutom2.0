@@ -16,4 +16,3 @@ def Post(caption="Rate this 1-10",credit="Credit unkown dm me",hashtags="#lambo"
     bot.logout()
 
 
-

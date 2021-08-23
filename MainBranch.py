@@ -302,18 +302,21 @@ def GetFirstPic(btc):
     SavePost(imagessrc[ind],btc)
 
 
-def RandomizeCapt_Post(batch,nr):
+def RandomizeCapt_Post(batch,nr,poost):
+    from Post_Protocol import Post
+    global Post
     type = PT[batch][nr]
     k = random.randint(0, len(cap[type]) - 1)
     k1 = random.randint(0, len(hs[type]) - 1)
-
+    print(cap[type][k])
+    print(hs[type][k1])
     Post(caption=cap[type][k], hashtags=hs[type][k1], batch = batch,nr = nr)
 
 
-def PostFromHost(batch, nr):
+def PostFromHost(batch, nr,Post):
     SearchForPage(Hp[batch][nr])
     GetFirstPic(batch)
-    RandomizeCapt_Post(batch,nr)
+    RandomizeCapt_Post(batch,nr,Post)
 
 
 def SearchForPage(page):
@@ -387,14 +390,14 @@ def GetFirst():
     return first
 
 
-def PostProtocolFull(batchnumber):
+def PostProtocolFull(batchnumber,Post):
 
     length= len(us[batchnumber])
     for i in range(0, length):
 
         LoginAndInit(batchnumber,i)
         time.sleep(2)
-        PostFromHost(batchnumber,i)
+        PostFromHost(batchnumber,i,Post)
         LogOut()
         time.sleep(3)
 
@@ -426,14 +429,14 @@ def UpdateData(batchnumber):
 # Pageln = len(us) - pageNr
 
 
-def MasterChoice(inpt,batchnumber):
+def MasterChoice(inpt,batchnumber,Post=""):
+    #exit()
     global driver
     driver = webdriver.Chrome('E:/chromedriver/chromedriver.exe')
     driver.get("https://www.instagram.com/")
-    print(inpt)
+    #print(inpt)
     if inpt == 1:
-
-        PostProtocolFull(batchnumber)
+        PostProtocolFull(batchnumber,Post)
     elif inpt == 2:
         print("ajuns")
         FollowProtocolFull(batchnumber)
@@ -496,6 +499,7 @@ def BatchAdmin(operation,batch):
             username = us[batch][i]
             password = ps[batch][i]
             typ = PT[batch][i]
+            print(username)
 
             try:
                 settings_file = "cookies/settcookie_"+username
@@ -537,20 +541,24 @@ def BatchAdmin(operation,batch):
             print('Cookie Expiry: {0!s}'.format(datetime.datetime.fromtimestamp(cookie_expiry).strftime('%Y-%m-%dT%H:%M:%SZ')))
 
             # Call the api
-            # results = api.user_feed('2958144170')
-            # assert len(results.get('items', [])) > 0
-            #
+
             # print('All ok')
+
             UsernameData = api.username_info(username)
+            print(typ)
             userID = UsernameData["user"]["pk"]
             tk = uuid.uuid4()
             Following = api.user_following(userID, rank_token=str(tk))
             lnFollowing = len(Following["users"])
+            print(lnFollowing, "ln following")
 
-            if lnFollowing > 4000 and operation==2:
+
+            if lnFollowing > 0 and operation==2:
                 print("switched")
                 # If I have more than 4k following I will unfollow instead of following
                 operation=4
+
+
             if operation == 1:
                 #POSTING ATTEMPT DOES NOT WORK
 
@@ -603,39 +611,52 @@ def BatchAdmin(operation,batch):
                 isFollowed = api.friendships_show_many(idsList)
                 #print(isFollowed)
                 print(lenusers)
-                ToFollow = 50
+                ToFollow = 30
                 for i in range(0,lenusers):
 
                     isf = isFollowed["friendship_statuses"][idsList[i]]['following']
                     isp = isFollowed["friendship_statuses"][idsList[i]]['is_private']
                     ot = isFollowed["friendship_statuses"][idsList[i]]['outgoing_request']
                     if isf == False & isp == True & ot == False:
-                        api.friendships_create(idsList[i])
+                        try:
+                            api.friendships_create(idsList[i])
+                        except:
+                            print("a dat eroare la create",username)
+
                         ToFollow-=1
                         #print(ToFollow)
-                        time.sleep(1+random.random())
+                        time.sleep(1.5+random.random())
                     if ToFollow<=0:
                         break
 
             elif operation == 3:
-                #UPDATE STATS NOT IMPLEMENTED YET
+                #UPDATE STATS NOT IMPLEMENTED YET WORKS WITH SELENIUM
                 print("")
             elif operation == 4:
+                # UNFOLLOWING PROCEDURE
+
                 UsernameData = api.username_info(username)
                 userID = UsernameData["user"]["pk"]
-                ud = uuid.uuid4()
-                ud = str(ud)
+
+                ud=uuid.uuid4()
+                ud=str(ud)
+
                 Following = api.user_following(userID, rank_token=ud)
                 lnFollowing = len(Following["users"])
-                toUnfollow = 50
+                toUnfollow = 30
                 for i in range(0, lnFollowing):
                     id = Following["users"][i]["pk"]
-                    api.friendships_destroy(user_id=id)
+                    try:
+                        api.friendships_destroy(user_id=id)
+                        print("merge la unfollow  ", username)
+                    except:
+                        print("a dat eroare la unfollow  ",username)
+
                     toUnfollow -= 1
                     #print(toUnfollow)
                     if toUnfollow <= 0:
                         break
-                    time.sleep(1.5)
+                    time.sleep(1.5+random.random())
             else:
                 print("testing area")
                 #TESTING AREA !!!!!!!!!!!!!!!!
@@ -647,18 +668,25 @@ def BatchAdmin(operation,batch):
         current_time = time.strftime("%H:%M:%S", at)
         print(current_time, " end ----------------------------------- ")
 
-        time.sleep(2700+random.randint(0,5)*60)
+        time.sleep(random.randint(20,25)*60)
 
 
 if __name__ == '__main__':
     print("1 - post protocol \n2 - follow protocol \n3 - update Stats")
     print("introduce op type")
+
     operation = input()
     operation=int(operation)
+
+
     batchnr = len(us)
     batchnr=1
+
     #MasterChoice -> Selenium implementation
     #BatchAdmin -> Api implementation
+    dirp = os.path.abspath('config')
+    if os.path.exists(dirp):
+        shutil.rmtree(dirp)
 
     func = BatchAdmin
     if operation == 1:
@@ -666,18 +694,18 @@ if __name__ == '__main__':
     elif operation==2:
         func = BatchAdmin
     elif operation==3:
-        dirp = os.path.abspath('config')
-        if os.path.exists(dirp):
-            shutil.rmtree(dirp)
-        from Post_Protocol import Post
-        global Post
         func = MasterChoice
     else:
         func = BatchAdmin
     p=[]
     for i in range(0,batchnr):
-        p.append(multiprocessing.Process(target=func, args=(operation, i)))
+        if operation == 1:
+            p.append(multiprocessing.Process(target=func, args=(operation, i)))
+        else:
+            p.append(multiprocessing.Process(target=func, args=(operation, i)))
+    #exit()
     for i in range(0,batchnr):
         p[i].start()
     for i in range(0,batchnr):
         p[i].join()
+
