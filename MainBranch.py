@@ -485,11 +485,13 @@ def onlogin_callback(api, new_settings_file):
 
 
 def BatchAdmin(operation,batch):
+    inoperation=operation
     length = len(us[batch])
     logging.basicConfig()
     logger = logging.getLogger('instagram_private_api')
-    logger.setLevel(logging.WARNING)
+    logger.setLevel(logging.DEBUG)
     device_id = None
+    print(operation, batch, " pppppppppppppppaaaaaaaaaaaaaaaaaaaaaaaaaaa")
     for w in range(0,10):
         at = time.localtime()
         current_time = time.strftime("%H:%M:%S", at)
@@ -544,7 +546,13 @@ def BatchAdmin(operation,batch):
 
             # print('All ok')
 
-            UsernameData = api.username_info(username)
+            try:
+                #usdata =       api.username_feed("supercarsrelated")
+                UsernameData = api.username_info(username)
+                print("a mers ", username)
+            except:
+                print("a dat eraore", username)
+                continue
             print(typ)
             userID = UsernameData["user"]["pk"]
             tk = uuid.uuid4()
@@ -552,13 +560,14 @@ def BatchAdmin(operation,batch):
             lnFollowing = len(Following["users"])
             print(lnFollowing, "ln following")
 
+            operation=inoperation
 
-            if lnFollowing > 0 and operation==2:
-                print("switched")
+            if lnFollowing > 3500 and operation==2:
+                print("switched", username, "  --------------------------------------------------")
                 # If I have more than 4k following I will unfollow instead of following
                 operation=4
 
-
+            todeletcookie = 0
             if operation == 1:
                 #POSTING ATTEMPT DOES NOT WORK
 
@@ -613,7 +622,8 @@ def BatchAdmin(operation,batch):
                 print(lenusers)
                 ToFollow = 30
                 for i in range(0,lenusers):
-
+                    if i == lenusers:
+                        print("NU A MAI GASIT ____________________________!!!!!!!!!!!!!!!!!!")
                     isf = isFollowed["friendship_statuses"][idsList[i]]['following']
                     isp = isFollowed["friendship_statuses"][idsList[i]]['is_private']
                     ot = isFollowed["friendship_statuses"][idsList[i]]['outgoing_request']
@@ -621,6 +631,7 @@ def BatchAdmin(operation,batch):
                         try:
                             api.friendships_create(idsList[i])
                         except:
+                            todeletcookie = 1
                             print("a dat eroare la create",username)
 
                         ToFollow-=1
@@ -644,14 +655,10 @@ def BatchAdmin(operation,batch):
                 Following = api.user_following(userID, rank_token=ud)
                 lnFollowing = len(Following["users"])
                 toUnfollow = 30
+
                 for i in range(0, lnFollowing):
                     id = Following["users"][i]["pk"]
-                    try:
-                        api.friendships_destroy(user_id=id)
-                        print("merge la unfollow  ", username)
-                    except:
-                        print("a dat eroare la unfollow  ",username)
-
+                    api.friendships_destroy(user_id=id)
                     toUnfollow -= 1
                     #print(toUnfollow)
                     if toUnfollow <= 0:
@@ -661,6 +668,33 @@ def BatchAdmin(operation,batch):
                 print("testing area")
                 #TESTING AREA !!!!!!!!!!!!!!!!
 
+                UsernameData = api.username_info(username)
+                userID = UsernameData["user"]["pk"]
+
+                ud = uuid.uuid4()
+                ud = str(ud)
+                print(ud, username)
+                print(userID, username)
+                Following = api.user_following(userID, rank_token=ud)
+                lnFollowing = len(Following["users"])
+                toUnfollow = 3
+                # print(api.user_info("5969427641"))
+                # print(api.user_info("8067531845"))
+                print(lnFollowing, username)
+                for i in range(0, lnFollowing):
+                    id = Following["users"][i]["pk"]
+                    print(api.user_info(id) , username)
+                    api.friendships_destroy(user_id=id)
+                    toUnfollow -= 1
+                    # print(toUnfollow)
+                    if toUnfollow <= 0:
+                        break
+                    time.sleep(1.5 + random.random())
+
+            # if todeletcookie == 1:
+            #     print(todeletcookie, username, 'cookieeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
+            #     #dirp = os.path.abspath('cookies/settcookie_' + str(username))
+            #     os.remove('cookies/settcookie_' + str(username))
 
 
 
@@ -668,7 +702,8 @@ def BatchAdmin(operation,batch):
         current_time = time.strftime("%H:%M:%S", at)
         print(current_time, " end ----------------------------------- ")
 
-        time.sleep(random.randint(20,25)*60)
+
+        time.sleep(random.randint(30,35)*60)
 
 
 if __name__ == '__main__':
@@ -680,6 +715,7 @@ if __name__ == '__main__':
 
 
     batchnr = len(us)
+
     batchnr=1
 
     #MasterChoice -> Selenium implementation
