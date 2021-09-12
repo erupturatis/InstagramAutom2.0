@@ -372,7 +372,7 @@ def FollowProtocolFull(batchnumber):
             print(us[batchnumber][i])
 
             time.sleep(3)
-            FollowFromHost(30,batchnumber,i)
+            FollowFromHost(20,batchnumber,i)
 
             LogOut()
             ToWait = random.random() + 3.5
@@ -382,7 +382,7 @@ def FollowProtocolFull(batchnumber):
         at = time.localtime()
         current_time = time.strftime("%H:%M:%S", at)
         print(current_time, " ----------------------------------- ")
-        ToWait = random.random() + 0.1 + random.randint(18, 19)
+        ToWait = random.random() + 0.1 + random.randint(35, 40)
         time.sleep(ToWait * 60)
 
 
@@ -489,7 +489,7 @@ def BatchAdmin(operation,batch):
     length = len(us[batch])
     logging.basicConfig()
     logger = logging.getLogger('instagram_private_api')
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.WARNING)
     device_id = None
     print(operation, batch, " pppppppppppppppaaaaaaaaaaaaaaaaaaaaaaaaaaa")
     for w in range(0,10):
@@ -502,7 +502,7 @@ def BatchAdmin(operation,batch):
             password = ps[batch][i]
             typ = PT[batch][i]
             print(username)
-
+            time.sleep(2.5+random.random())
             try:
                 settings_file = "cookies/settcookie_"+username
                 if not os.path.isfile(settings_file):
@@ -703,7 +703,7 @@ def BatchAdmin(operation,batch):
         print(current_time, " end ----------------------------------- ")
 
 
-        time.sleep(random.randint(30,35)*60)
+        time.sleep(random.randint(35,40)*60)
 
 
 if __name__ == '__main__':
@@ -716,7 +716,7 @@ if __name__ == '__main__':
 
     batchnr = len(us)
 
-    batchnr=1
+    #batchnr=1
 
     #MasterChoice -> Selenium implementation
     #BatchAdmin -> Api implementation
@@ -728,7 +728,7 @@ if __name__ == '__main__':
     if operation == 1:
         func = MasterChoice
     elif operation==2:
-        func = BatchAdmin
+        func = MasterChoice
     elif operation==3:
         func = MasterChoice
     else:
