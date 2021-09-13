@@ -40,6 +40,11 @@ from pathlib import Path
 def AcceptCookies():
     try:
         not_now = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Accept All Cookies")]'))).click()
+    except:
+        print("")
+    try:
+        not_now = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Accept All")]'))).click()
     except:
         driver.refresh()
