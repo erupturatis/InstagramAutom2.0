@@ -38,11 +38,7 @@ from pathlib import Path
 
 
 def AcceptCookies():
-    try:
-        not_now = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Accept All Cookies")]'))).click()
-    except:
-        print("")
+
     try:
         not_now = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Accept All")]'))).click()
@@ -83,6 +79,11 @@ def InstaLogin(Vusername, Vpassword):
         password.send_keys(Vpassword)
 
     time.sleep(3)
+    try:
+        not_now = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Accept All Cookies")]'))).click()
+    except:
+        print("")
     try:
         log_in = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']"))).click()
