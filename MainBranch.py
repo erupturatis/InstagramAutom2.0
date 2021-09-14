@@ -205,13 +205,6 @@ def GoToLikes():
         time.sleep(0.5)
         return 0
     return 1
-    # lk = '/html/body/div[5]/div[2]/div/article/div[3]/section[2]/div/div/a/span'
-    # lk2 = '/html/body/div[5]/div[2]/div/article/div[3]/section[2]/div/div[2]/a/span'
-    # lk3 = '/html/body/div[5]/div[2]/div/article/div[3]/section[2]/div/div/a'
-    # lk4 = '/html/body/div[5]/div[2]/div/article/div[3]/section[2]/div/div[2]/a/span'
-    # zV_Nj
-    # WebDriverWait(driver, 10).until(   (EC.element_to_be_clickable((By.XPATH, lk)))||(EC.element_to_be_clickable((By.XPATH, lk2)))   ).click()
-
 
 def FollowFromHost(number,batch,nr):
     Tp = PT[batch][nr]
@@ -232,7 +225,7 @@ def FollowFromHost(number,batch,nr):
     actions.click(x[1]).perform()
     time.sleep(0.5)
 
-    x = driver.find_element_by_class_name("wpO6b  ")
+    x = driver.find_element_by_class_name("wpO6b")
     actions = ActionChains(driver)
     actions.click(x).perform()
     time.sleep(0.5)
@@ -241,7 +234,41 @@ def FollowFromHost(number,batch,nr):
 def ScrollTo(el):
     el.location_once_scrolled_into_view
 
+def Unfollow(number):
+    time.sleep(3)
+    toFollow = driver.find_elements_by_class_name('L3NKy')
+    cnt = 0
+    ta = int(len(toFollow) / 2 + 1)
+    if ta > len(toFollow) - 1:
+        return
+    A = toFollow[ta]
+    B = A
+    while (number > 0):
+        ta = int(len(toFollow) / 2 + 1)
+        for i in range(ta, len(toFollow) - 1):
+            Fl = toFollow[i]
+            Fl.location_once_scrolled_into_view
+            if number < 0:
+                return
+            if (Fl.text == 'Follow'):
+                number -= 1
+                ScrollTo(Fl)
+                time.sleep(random.random() + 1.2)
+                Fl.click()
+                time.sleep(random.random() + 1.2)
+                WebDriverWait(driver, 10).until(
+                    EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Unfollow")]'))).click()
+                time.sleep(random.random() + 2.2)
 
+            ScrollTo(Fl)
+            time.sleep(1.4 + random.random())
+
+        B = A
+        toFollow = driver.find_elements_by_class_name('L3NKy')
+        ta = int(len(toFollow) / 2 + 1)
+        A = toFollow[ta]
+        if A == B:
+            return
 
 def Follow(number):
     time.sleep(3)
