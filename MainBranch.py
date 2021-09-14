@@ -48,7 +48,7 @@ def AcceptCookies():
         try:not_now = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Accept All")]'))).click()
         except:
-            print("a")
+            pass
 
 def InstaLogin(Vusername, Vpassword):
     try:
@@ -83,7 +83,7 @@ def InstaLogin(Vusername, Vpassword):
         not_now = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Allow All Cookies")]'))).click()
     except:
-        print("")
+        pass
     try:
         log_in = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']"))).click()
@@ -105,7 +105,7 @@ def InstaLogin(Vusername, Vpassword):
         not_now2 = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Not Now")]'))).click()
     except:
-        print("nimic")
+        pass
 
 def SavePost(imgsrc,btc):
     path = os.getcwd()
@@ -132,12 +132,12 @@ def GoToFirstPost(h):
             searchbox.send_keys(Keys.ENTER)
             time.sleep(1)
         except:
-            print("nmc")
+            pass
         try:
             searchbox.send_keys(Keys.ENTER)
             time.sleep(2)
         except:
-            print("nmc")
+            pass
 
         time.sleep(1)
         clickableimages = driver.find_elements_by_class_name('_9AhH0')
@@ -155,7 +155,7 @@ def LogOut():
         EC.element_to_be_clickable((By.XPATH, '//div[contains(text(), "Log Out")]'))).click()
 
 
-def GoToMyProfile():
+def GoToProfile():
     time.sleep(1)
     choices = driver.find_elements_by_xpath("//span[@class='_2dbep qNELH']")
     cautat = choices[0]
@@ -166,12 +166,13 @@ def GoToMyProfile():
         EC.element_to_be_clickable((By.XPATH, '//div[contains(text(), "Profile")]'))).click()
     time.sleep(2)
 
+def GoToFollowers():
+    WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, '//div[contains(text(), "following")]'))).click()
 
 def UpdateStats(f,i,j):
     elements = driver.find_elements_by_class_name('g47SY ')
 
-    print(elements[1].text)
-    print(elements[2].text)
     f.write(us[i][j]+ " Followers:" + elements[1].text + "  Following:" + elements[2].text)
     f.write("\n")
 
@@ -216,8 +217,6 @@ def FollowFromHost(number,batch,nr):
     Tp = PT[batch][nr]
     k = random.randint(0, len(PTFF[Tp]) - 1)
 
-    print(len(PTFF[Tp]) - 1, "     ", k, " ---- ")
-
     SearchForPage(PTFF[Tp][k])
     ind = 0
     GoToFirstPost(ind)
@@ -241,10 +240,7 @@ def FollowFromHost(number,batch,nr):
 
 def ScrollTo(el):
     el.location_once_scrolled_into_view
-    # element=el
-    # actions = ActionChains(driver)
-    # actions.move_to_element(element).perform()
-    # driver.execute_script("arguments[0].scrollIntoView();", element)
+
 
 
 def Follow(number):
@@ -253,12 +249,10 @@ def Follow(number):
     cnt = 0
     ta = int(len(toFollow) / 2 + 1)
     if ta > len(toFollow) - 1:
-        print("PREMATUR1 ____________________")
         return
     A = toFollow[ta]
     B = A
     while (number > 0):
-        # print (len(toFollow))
         ta = int(len(toFollow) / 2 + 1)
         for i in range(ta, len(toFollow) - 1):
             Fl = toFollow[i]
@@ -281,7 +275,6 @@ def Follow(number):
         ta = int(len(toFollow) / 2 + 1)
         A = toFollow[ta]
         if A == B:
-            print("PREMATUR2 ____________________")
             return
 
 
@@ -302,7 +295,6 @@ def GetFirstPic(btc):
     time.sleep(1)
 
     images = driver.find_elements_by_class_name('FFVAD')
-    print(len(images))
     imagessrc = [image.get_attribute('src') for image in images]
     imagessrc = imagessrc[:-2]
     SavePost(imagessrc[ind],btc)
@@ -314,8 +306,6 @@ def RandomizeCapt_Post(batch,nr,poost):
     type = PT[batch][nr]
     k = random.randint(0, len(cap[type]) - 1)
     k1 = random.randint(0, len(hs[type]) - 1)
-    print(cap[type][k])
-    print(hs[type][k1])
     Post(caption=cap[type][k], hashtags=hs[type][k1], batch = batch,nr = nr)
 
 
@@ -351,9 +341,8 @@ def SearchForPage(page):
     try:
         searchbox.send_keys(Keys.ENTER)
         time.sleep(1)
-        print("iar face aiurea")
     except:
-        print("")
+        pass
 
 
 def LoginAndInit(i,j):
@@ -366,7 +355,7 @@ def FollowProtocolFull(batchnumber):
     for t in range(0, 10):
         at = time.localtime()
         current_time = time.strftime("%H:%M:%S", at)
-        print(current_time, " ----------------------------------- ", t)
+        print(current_time, "TIME AT START ----------------------------------- ", t)
         driver.refresh()
         time.sleep(2)
 
@@ -387,7 +376,7 @@ def FollowProtocolFull(batchnumber):
             time.sleep(3)
         at = time.localtime()
         current_time = time.strftime("%H:%M:%S", at)
-        print(current_time, " ----------------------------------- ")
+        print(current_time, "TIME BEFORE PAUSE ----------------------------------- ")
         ToWait = random.random() + 0.1 + random.randint(35, 40)
         time.sleep(ToWait * 60)
 
@@ -419,7 +408,7 @@ def UpdateData(batchnumber):
             first = 1
         LoginAndInit(batchnumber,i)
         time.sleep(2)
-        GoToMyProfile()
+        GoToProfile()
         UpdateStats(f,batchnumber,i)
         time.sleep(1)
         LogOut()
@@ -440,11 +429,9 @@ def MasterChoice(inpt,batchnumber,Post=""):
     global driver
     driver = webdriver.Chrome('E:/chromedriver/chromedriver.exe')
     driver.get("https://www.instagram.com/")
-    #print(inpt)
     if inpt == 1:
         PostProtocolFull(batchnumber,Post)
     elif inpt == 2:
-        print("ajuns")
         FollowProtocolFull(batchnumber)
     elif inpt == 3:
         UpdateData(batchnumber)
@@ -548,36 +535,26 @@ def BatchAdmin(operation,batch):
             cookie_expiry = api.cookie_jar.auth_expires
             print('Cookie Expiry: {0!s}'.format(datetime.datetime.fromtimestamp(cookie_expiry).strftime('%Y-%m-%dT%H:%M:%SZ')))
 
-            # Call the api
-
-            # print('All ok')
+            # Call the api ------------------------------------------
 
             try:
-                #usdata =       api.username_feed("supercarsrelated")
                 UsernameData = api.username_info(username)
-                print("a mers ", username)
             except:
-                print("a dat eraore", username)
                 continue
-            print(typ)
             userID = UsernameData["user"]["pk"]
             tk = uuid.uuid4()
             Following = api.user_following(userID, rank_token=str(tk))
             lnFollowing = len(Following["users"])
-            print(lnFollowing, "ln following")
 
             operation=inoperation
 
-            if lnFollowing > 3500 and operation==2:
-                print("switched", username, "  --------------------------------------------------")
-                # If I have more than 4k following I will unfollow instead of following
+            if lnFollowing > 4000 and operation==2:
+                # If you have more than 4k following I will unfollow instead of following
                 operation=4
 
             todeletcookie = 0
             if operation == 1:
                 #POSTING ATTEMPT DOES NOT WORK
-
-                print("postari")
                 p = api.username_feed(Hp[batch][i])
                 id = p['items'][0]['id']
                 code = p['items'][0]['code']
@@ -622,10 +599,8 @@ def BatchAdmin(operation,batch):
                         idsList.append(str(media_likers['users'][k]['pk']))
 
                 lenusers = len(idsList)
-                #print(idsList)
                 isFollowed = api.friendships_show_many(idsList)
-                #print(isFollowed)
-                print(lenusers)
+
                 ToFollow = 30
                 for i in range(0,lenusers):
                     if i == lenusers:
@@ -638,17 +613,16 @@ def BatchAdmin(operation,batch):
                             api.friendships_create(idsList[i])
                         except:
                             todeletcookie = 1
-                            print("a dat eroare la create",username)
+
 
                         ToFollow-=1
-                        #print(ToFollow)
                         time.sleep(1.5+random.random())
                     if ToFollow<=0:
                         break
 
             elif operation == 3:
+                pass
                 #UPDATE STATS NOT IMPLEMENTED YET WORKS WITH SELENIUM
-                print("")
             elif operation == 4:
                 # UNFOLLOWING PROCEDURE
 
@@ -666,12 +640,10 @@ def BatchAdmin(operation,batch):
                     id = Following["users"][i]["pk"]
                     api.friendships_destroy(user_id=id)
                     toUnfollow -= 1
-                    #print(toUnfollow)
                     if toUnfollow <= 0:
                         break
                     time.sleep(1.5+random.random())
             else:
-                print("testing area")
                 #TESTING AREA !!!!!!!!!!!!!!!!
 
                 UsernameData = api.username_info(username)
@@ -684,26 +656,14 @@ def BatchAdmin(operation,batch):
                 Following = api.user_following(userID, rank_token=ud)
                 lnFollowing = len(Following["users"])
                 toUnfollow = 3
-                # print(api.user_info("5969427641"))
-                # print(api.user_info("8067531845"))
-                print(lnFollowing, username)
+
                 for i in range(0, lnFollowing):
                     id = Following["users"][i]["pk"]
-                    print(api.user_info(id) , username)
                     api.friendships_destroy(user_id=id)
                     toUnfollow -= 1
-                    # print(toUnfollow)
                     if toUnfollow <= 0:
                         break
                     time.sleep(1.5 + random.random())
-
-            # if todeletcookie == 1:
-            #     print(todeletcookie, username, 'cookieeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
-            #     #dirp = os.path.abspath('cookies/settcookie_' + str(username))
-            #     os.remove('cookies/settcookie_' + str(username))
-
-
-
         at = time.localtime()
         current_time = time.strftime("%H:%M:%S", at)
         print(current_time, " end ----------------------------------- ")
@@ -721,11 +681,13 @@ if __name__ == '__main__':
 
 
     batchnr = len(us)
+    #batchnr=1 for testing new functions, work with one account at a time
 
-    #batchnr=1
 
     #MasterChoice -> Selenium implementation
     #BatchAdmin -> Api implementation
+
+
     dirp = os.path.abspath('config')
     if os.path.exists(dirp):
         shutil.rmtree(dirp)
