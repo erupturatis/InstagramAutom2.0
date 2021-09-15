@@ -84,7 +84,7 @@ def InstaLogin(Vusername, Vpassword):
         log_in = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']"))).click()
     except:
-        time.sleep(3)
+        time.sleep(3.5)
         log_in = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']"))).click()
     time.sleep(1)
@@ -218,11 +218,9 @@ def GoToLikes():
 def FollowFromHost(number,batch,nr):
     Tp = PT[batch][nr]
     k = random.randint(0, len(PTFF[Tp]) - 1)
-
     SearchForPage(PTFF[Tp][k])
     ind = 0
     GoToFirstPost(ind)
-
     while GoToLikes() == 0:
         ind += 1
         GoToFirstPost(ind)
@@ -244,8 +242,10 @@ def ScrollTo(el):
     el.location_once_scrolled_into_view
 
 def Unfollow(number):
+    starting=0
     time.sleep(3)
     toFollow = driver.find_elements_by_class_name('L3NKy')
+    GoodtoFollow = []
     cnt = 0
     ta = int(len(toFollow) / 2 + 1)
     if ta > len(toFollow) - 1:
@@ -253,24 +253,55 @@ def Unfollow(number):
     A = toFollow[ta]
     B = A
     while (number > 0):
-        ta = int(len(toFollow) / 2 + 1)
-        for i in range(ta, len(toFollow) - 1):
+
+        for i in range(0, len(toFollow) - 1):
+            print(i)
             Fl = toFollow[i]
-            Fl.location_once_scrolled_into_view
             if number < 0:
                 return
-            if (Fl.text == 'Follow'):
+            if (Fl.text == 'Following'):
+                GoodtoFollow.append(Fl)
+
+        if len(GoodtoFollow) == 0:
+            Fl = toFollow[((len(toFollow) - 1)/2)]
+            try:
+                Fl.location_once_scrolled_into_view
+            except:
+                pass
+
+        for i in range(0, len(GoodtoFollow) - 1):
+            print(i)
+            Fl = toFollow[i]
+            try:
+                Fl.location_once_scrolled_into_view
+            except:
+                time.sleep(1)
+                Fl.location_once_scrolled_into_view
+            if number < 0:
+                return
+            if (Fl.text == 'Following'):
+                GoodtoFollow.append(Fl)
                 number -= 1
                 ScrollTo(Fl)
                 time.sleep(random.random() + 1.2)
                 Fl.click()
                 time.sleep(random.random() + 1.2)
-                WebDriverWait(driver, 10).until(
-                    EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Unfollow")]'))).click()
+                try:
+                    WebDriverWait(driver, 10).until(
+                        EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Unfollow")]'))).click()
+                except:
+                    time.sleep(1)
+                    try:
+                        WebDriverWait(driver, 10).until(
+                            EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Unfollow")]'))).click()
+                    except:
+                        break
                 time.sleep(random.random() + 2.2)
 
             ScrollTo(Fl)
             time.sleep(1.4 + random.random())
+
+
 
         B = A
         toFollow = driver.find_elements_by_class_name('L3NKy')
@@ -382,6 +413,16 @@ def SearchForPage(page):
     except:
         pass
 
+def TurnToNumber(str):
+    number=0
+    for i in str:
+        print(i)
+        if i>='0' and i<='9':
+            number = number*10 + (int)(i)
+
+    print("RETURNED NUMBER", number)
+    return number
+
 
 def LoginAndInit(i,j):
 
@@ -391,19 +432,14 @@ def LoginAndInit(i,j):
 
 def SwitchOrNot():
     GoToProfile()
-    if(GetFollowing()>3500):
-        return
+    if(TurnToNumber((GetFollowing()))>350):
+        return UnfollowProtocol
+    else:
+        return FollowFromHost
+
 
 
 def FollowManagement(batchnumber):
-
-
-def UnfollowProtocol(batchnumber):
-    pass
-
-
-
-def FollowProtocolFull(batchnumber):
     for t in range(0, 10):
         at = time.localtime()
         current_time = time.strftime("%H:%M:%S", at)
@@ -416,10 +452,9 @@ def FollowProtocolFull(batchnumber):
 
 
             LoginAndInit(batchnumber,i)
-            print(us[batchnumber][i])
-
+            ToCall = SwitchOrNot()
             time.sleep(3)
-            FollowFromHost(20,batchnumber,i)
+            ToCall(20,batchnumber,i)
 
             LogOut()
             ToWait = random.random() + 3.5
@@ -431,6 +466,16 @@ def FollowProtocolFull(batchnumber):
         print(current_time, "TIME BEFORE PAUSE ----------------------------------- ")
         ToWait = random.random() + 0.1 + random.randint(35, 40)
         time.sleep(ToWait * 60)
+
+def UnfollowProtocol(number,batchnumber,i):
+    print("apelat")
+    elements = driver.find_elements_by_class_name('g47SY ')
+    elements[2].click()
+    print(number)
+    Unfollow(number)
+
+
+
 
 
 def GetFirst():
@@ -484,7 +529,7 @@ def MasterChoice(inpt,batchnumber,Post=""):
     if inpt == 1:
         PostProtocolFull(batchnumber,Post)
     elif inpt == 2:
-        FollowProtocolFull(batchnumber)
+        FollowManagement(batchnumber)
     elif inpt == 3:
         UpdateData(batchnumber)
 
@@ -725,7 +770,7 @@ def BatchAdmin(operation,batch):
 
 
 if __name__ == '__main__':
-    print("1 - post protocol \n2 - follow protocol \n3 - update Stats")
+    print("1 - post protocol \n2 - follow management protocol \n3 - update Stats protocol")
     print("introduce op type")
 
     operation = input()
@@ -733,11 +778,12 @@ if __name__ == '__main__':
 
 
     batchnr = len(us)
-    #batchnr=1 for testing new functions, work with one account at a time
+    batchnr=1
+    #setting batchnr to 1 is used for work with one account at a time
 
 
-    #MasterChoice -> Selenium implementation
-    #BatchAdmin -> Api implementation
+    #MasterChoice -> Selenium implementation , but ban chance is much higher
+    #BatchAdmin -> Api implementation , not as effective but it does not get your account banned
 
 
     dirp = os.path.abspath('config')
