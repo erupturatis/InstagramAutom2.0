@@ -79,11 +79,7 @@ def InstaLogin(Vusername, Vpassword):
         password.send_keys(Vpassword)
 
     time.sleep(3)
-    try:
-        not_now = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Allow All Cookies")]'))).click()
-    except:
-        pass
+
     try:
         log_in = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']"))).click()
@@ -92,6 +88,11 @@ def InstaLogin(Vusername, Vpassword):
         log_in = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']"))).click()
     time.sleep(1)
+    try:
+        not_now = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Allow All Cookies")]'))).click()
+    except:
+        pass
     try:
         not_now = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Not Now")]'))).click()
@@ -169,6 +170,14 @@ def GoToProfile():
 def GoToFollowers():
     WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.XPATH, '//div[contains(text(), "following")]'))).click()
+
+def GetFollowers():
+    elements = driver.find_elements_by_class_name('g47SY ')
+    return elements[1].text
+
+def GetFollowing():
+    elements = driver.find_elements_by_class_name('g47SY ')
+    return elements[2].text
 
 def UpdateStats(f,i,j):
     elements = driver.find_elements_by_class_name('g47SY ')
@@ -350,6 +359,8 @@ def SearchForPage(page):
         searchbox.clear()
     except:
         time.sleep(2)
+        driver.refresh()
+        time.sleep(2)
         searchbox = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, "//input[@placeholder='Search']")))
         searchbox.clear()
@@ -376,6 +387,20 @@ def LoginAndInit(i,j):
 
     AcceptCookies()
     InstaLogin(us[i][j], ps[i][j])
+
+
+def SwitchOrNot():
+    GoToProfile()
+    if(GetFollowing()>3500):
+        return
+
+
+def FollowManagement(batchnumber):
+
+
+def UnfollowProtocol(batchnumber):
+    pass
+
 
 
 def FollowProtocolFull(batchnumber):
