@@ -262,11 +262,10 @@ def Unfollow(number):
 
     #TAKES ONLY THE USERS YOU ARE FOLLOWING
     for i in range(0, len(toFollow) - 1):
-        len(toFollow) - 1
         Fl = toFollow[i]
         if (Fl.text == 'Following'):
             GoodtoFollow.append(Fl)
-    print(len(toFollow) - 1)
+
     #UNFOLLOWS
     for i in range(0, len(GoodtoFollow) - 1):
         Fl = GoodtoFollow[i]
@@ -274,7 +273,6 @@ def Unfollow(number):
             return
         ScrollTo(Fl)
         time.sleep(random.random() + 1.2)
-        print("before", i)
         Fl.click()
         number -= 1
         time.sleep(random.random() + 1.2)
@@ -342,7 +340,7 @@ def GetFirstPic(btc):
     SavePost(imagessrc[ind],btc)
 
 
-def RandomizeCapt_Post(batch,nr,poost):
+def RandomizeCapt_Post(batch,nr):
     from Post_Protocol import Post
     global Post
     type = PT[batch][nr]
@@ -351,10 +349,10 @@ def RandomizeCapt_Post(batch,nr,poost):
     Post(caption=cap[type][k], hashtags=hs[type][k1], batch = batch,nr = nr)
 
 
-def PostFromHost(batch, nr,Post):
+def PostFromHost(batch, nr):
     SearchForPage(Hp[batch][nr])
     GetFirstPic(batch)
-    RandomizeCapt_Post(batch,nr,Post)
+    RandomizeCapt_Post(batch,nr)
 
 
 def SearchForPage(page):
@@ -407,7 +405,7 @@ def LoginAndInit(i,j):
 
 def SwitchOrNot():
     GoToProfile()
-    if(TurnToNumber((GetFollowing()))>350):
+    if(TurnToNumber((GetFollowing()))>4000):
         return UnfollowProtocol
     else:
         return FollowFromHost
@@ -455,14 +453,14 @@ def GetFirst():
     return first
 
 
-def PostProtocolFull(batchnumber,Post):
+def PostProtocolFull(batchnumber):
 
     length= len(us[batchnumber])
     for i in range(0, length):
 
         LoginAndInit(batchnumber,i)
         time.sleep(2)
-        PostFromHost(batchnumber,i,Post)
+        PostFromHost(batchnumber,i)
         LogOut()
         time.sleep(3)
 
@@ -500,7 +498,7 @@ def MasterChoice(inpt,batchnumber,NumberOfUsers=15):
     driver = webdriver.Chrome('E:/chromedriver/chromedriver.exe')
     driver.get("https://www.instagram.com/")
     if inpt == 1:
-        PostProtocolFull(batchnumber,Post)
+        PostProtocolFull(batchnumber)
     elif inpt == 2:
         FollowManagement(batchnumber,NumberOfUsers)
     elif inpt == 3:
@@ -748,6 +746,7 @@ if __name__ == '__main__':
 
     operation = input()
     operation=int(operation)
+    NumberofUsers=0
     if operation == 2:
         print("Please introduce number of users")
         NumberofUsers = input()
@@ -755,7 +754,7 @@ if __name__ == '__main__':
 
 
     batchnr = len(us)
-    batchnr=1
+    #batchnr=1
     #setting batchnr to 1 is used for work with one account at a time
 
 
