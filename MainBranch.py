@@ -242,73 +242,48 @@ def ScrollTo(el):
     el.location_once_scrolled_into_view
 
 def Unfollow(number):
-    starting=0
     time.sleep(3)
     toFollow = driver.find_elements_by_class_name('L3NKy')
     GoodtoFollow = []
-    cnt = 0
-    ta = int(len(toFollow) / 2 + 1)
-    if ta > len(toFollow) - 1:
-        return
-    A = toFollow[ta]
-    B = A
-    while (number > 0):
 
-        for i in range(0, len(toFollow) - 1):
-            print(i)
-            Fl = toFollow[i]
-            if number < 0:
-                return
-            if (Fl.text == 'Following'):
-                GoodtoFollow.append(Fl)
-
-        if len(GoodtoFollow) == 0:
-            Fl = toFollow[((len(toFollow) - 1)/2)]
-            try:
-                Fl.location_once_scrolled_into_view
-            except:
-                pass
-
-        for i in range(0, len(GoodtoFollow) - 1):
-            print(i)
-            Fl = toFollow[i]
-            try:
-                Fl.location_once_scrolled_into_view
-            except:
-                time.sleep(1)
-                Fl.location_once_scrolled_into_view
-            if number < 0:
-                return
-            if (Fl.text == 'Following'):
-                GoodtoFollow.append(Fl)
-                number -= 1
-                ScrollTo(Fl)
-                time.sleep(random.random() + 1.2)
-                Fl.click()
-                time.sleep(random.random() + 1.2)
-                try:
-                    WebDriverWait(driver, 10).until(
-                        EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Unfollow")]'))).click()
-                except:
-                    time.sleep(1)
-                    try:
-                        WebDriverWait(driver, 10).until(
-                            EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Unfollow")]'))).click()
-                    except:
-                        break
-                time.sleep(random.random() + 2.2)
-
-            ScrollTo(Fl)
-            time.sleep(1.4 + random.random())
-
-
-
-        B = A
+    #SCROLLING PHASE
+    lastlength = 0
+    for i in range(0, 7):
         toFollow = driver.find_elements_by_class_name('L3NKy')
-        ta = int(len(toFollow) / 2 + 1)
-        A = toFollow[ta]
-        if A == B:
+        length = len(toFollow) - 1
+        Fl = toFollow[length]
+        ScrollTo(Fl)
+        while (length == lastlength):
+            time.sleep(1 + random.random())
+            toFollow = driver.find_elements_by_class_name('L3NKy')
+            length = len(toFollow) - 1
+        lastlength = length
+    toFollow = driver.find_elements_by_class_name('L3NKy')
+
+    #TAKES ONLY THE USERS YOU ARE FOLLOWING
+    for i in range(0, len(toFollow) - 1):
+        len(toFollow) - 1
+        Fl = toFollow[i]
+        if (Fl.text == 'Following'):
+            GoodtoFollow.append(Fl)
+    print(len(toFollow) - 1)
+    #UNFOLLOWS
+    for i in range(0, len(GoodtoFollow) - 1):
+        Fl = GoodtoFollow[i]
+        if number < 0:
             return
+        ScrollTo(Fl)
+        time.sleep(random.random() + 1.2)
+        print("before", i)
+        Fl.click()
+        number -= 1
+        time.sleep(random.random() + 1.2)
+        WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Unfollow")]'))).click()
+        time.sleep(random.random() + 2.2)
+        ScrollTo(Fl)
+        time.sleep(1.4 + random.random())
+
 
 def Follow(number):
     time.sleep(3)
@@ -439,7 +414,7 @@ def SwitchOrNot():
 
 
 
-def FollowManagement(batchnumber):
+def FollowManagement(batchnumber,NumberOfUsers):
     for t in range(0, 10):
         at = time.localtime()
         current_time = time.strftime("%H:%M:%S", at)
@@ -449,13 +424,10 @@ def FollowManagement(batchnumber):
 
         lng=len(us[batchnumber])
         for i in range(0, lng):
-
-
             LoginAndInit(batchnumber,i)
             ToCall = SwitchOrNot()
             time.sleep(3)
-            ToCall(20,batchnumber,i)
-
+            ToCall(NumberOfUsers,batchnumber,i)
             LogOut()
             ToWait = random.random() + 3.5
             time.sleep(ToWait * 60)
@@ -473,9 +445,10 @@ def UnfollowProtocol(number,batchnumber,i):
     elements[2].click()
     print(number)
     Unfollow(number)
-
-
-
+    x = driver.find_elements_by_class_name("WaOAr")
+    actions = ActionChains(driver)
+    actions.click(x[1]).perform()
+    time.sleep(0.5)
 
 
 def GetFirst():
@@ -521,7 +494,7 @@ def UpdateData(batchnumber):
 # Pageln = len(us) - pageNr
 
 
-def MasterChoice(inpt,batchnumber,Post=""):
+def MasterChoice(inpt,batchnumber,NumberOfUsers=15):
     #exit()
     global driver
     driver = webdriver.Chrome('E:/chromedriver/chromedriver.exe')
@@ -529,7 +502,7 @@ def MasterChoice(inpt,batchnumber,Post=""):
     if inpt == 1:
         PostProtocolFull(batchnumber,Post)
     elif inpt == 2:
-        FollowManagement(batchnumber)
+        FollowManagement(batchnumber,NumberOfUsers)
     elif inpt == 3:
         UpdateData(batchnumber)
 
@@ -775,6 +748,10 @@ if __name__ == '__main__':
 
     operation = input()
     operation=int(operation)
+    if operation == 2:
+        print("Please introduce number of users")
+        NumberofUsers = input()
+        NumberofUsers = TurnToNumber(NumberofUsers)
 
 
     batchnr = len(us)
@@ -802,9 +779,9 @@ if __name__ == '__main__':
     p=[]
     for i in range(0,batchnr):
         if operation == 1:
-            p.append(multiprocessing.Process(target=func, args=(operation, i)))
+            p.append(multiprocessing.Process(target=func, args=(operation, i, NumberofUsers)))
         else:
-            p.append(multiprocessing.Process(target=func, args=(operation, i)))
+            p.append(multiprocessing.Process(target=func, args=(operation, i, NumberofUsers)))
     #exit()
     for i in range(0,batchnr):
         p[i].start()
