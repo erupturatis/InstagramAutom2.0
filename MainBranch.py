@@ -111,7 +111,6 @@ def InstaLogin(Vusername, Vpassword):
 def SavePost(imgsrc,btc):
     path = os.getcwd()
     path = os.path.join(path, "Posts")
-    #imgsrc="https://instagram.fotp3-3.fna.fbcdn.net/v/t51.2885-15/sh0.08/e35/s640x640/240114031_4101049583354243_2549448833453338629_n.jpg?_nc_ht=instagram.fotp3-3.fna.fbcdn.net&_nc_cat=1&_nc_ohc=nRSo2BQV_vsAX-ylchr&edm=AABBvjUBAAAA&ccb=7-4&oh=24656707092404f39d0ed54498a7afe5&oe=61282080&_nc_sid=83d603"
     save_as = os.path.join(path, 'post'+str(btc)+ '.jpg')
     wget.download(imgsrc, save_as)
 
@@ -186,7 +185,7 @@ def UpdateStats(f,i,j):
     f.write("\n")
 
 
-def GoToLikes():
+def GoToLikes(SkipAfter24H = 0):
     time.sleep(1)
     # vcOH2
 
@@ -204,6 +203,11 @@ def GoToLikes():
         actions.click(x).perform()
         time.sleep(0.5)
         return 0
+    R = driver.find_element_by_class_name('_1o9PC')
+    date = R.text
+    if not("HOURS" in date) and SkipAfter24H == 1:
+        print("SKIPPED")
+        return 2
 
     try:
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "zV_Nj"))).click()
@@ -221,7 +225,7 @@ def FollowFromHost(number,batch,nr):
     SearchForPage(PTFF[Tp][k])
     ind = 0
     GoToFirstPost(ind)
-    while GoToLikes() == 0:
+    while GoToLikes(SkipAfter24H=0) == 0:
         ind += 1
         GoToFirstPost(ind)
 
@@ -317,6 +321,10 @@ def Follow(number):
         if A == B:
             return
 
+def XPost():
+    x = '/html/body/div[6]/div[3]/button'
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, x))).click()
+    time.sleep(1)
 
 def GetFirstPic(btc):
     time.sleep(1)
@@ -324,15 +332,21 @@ def GetFirstPic(btc):
     ind = 0
     GoToFirstPost(ind)
 
-    while GoToLikes() == 0:
+    while True:
+        Result = GoToLikes(SkipAfter24H=1)
+        if Result == 0:
+            pass
+        if Result == 1:
+            break
+        if Result == 2:
+            XPost()
+            return -1
         ind += 1
         GoToFirstPost(ind)
 
     x = '/ html / body / div[7] / div / div / div[1] / div / div[2]'
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, x))).click()
-    x = '/html/body/div[6]/div[3]/button'
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, x))).click()
-    time.sleep(1)
+    XPost()
 
     images = driver.find_elements_by_class_name('FFVAD')
     imagessrc = [image.get_attribute('src') for image in images]
@@ -351,7 +365,8 @@ def RandomizeCapt_Post(batch,nr):
 
 def PostFromHost(batch, nr):
     SearchForPage(Hp[batch][nr])
-    GetFirstPic(batch)
+    if GetFirstPic(batch) == -1:
+        return
     RandomizeCapt_Post(batch,nr)
 
 
@@ -754,7 +769,7 @@ if __name__ == '__main__':
 
 
     batchnr = len(us)
-    #batchnr=1
+    batchnr=1
     #setting batchnr to 1 is used for work with one account at a time
 
 
