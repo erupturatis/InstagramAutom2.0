@@ -176,6 +176,10 @@ def GetFollowers():
 
 def GetFollowing():
     elements = driver.find_elements_by_class_name('g47SY ')
+    if len(elements)<3:
+        time.sleep(5)
+    driver.refresh()
+    elements = driver.find_elements_by_class_name('g47SY ')
     return elements[2].text
 
 def UpdateStats(f,i,j):
@@ -203,11 +207,12 @@ def GoToLikes(SkipAfter24H = 0):
         actions.click(x).perform()
         time.sleep(0.5)
         return 0
-    R = driver.find_element_by_class_name('_1o9PC')
-    date = R.text
-    if not("HOURS" in date) and SkipAfter24H == 1:
-        print("SKIPPED")
-        return 2
+    if SkipAfter24H == 1:
+        R = driver.find_element_by_class_name('_1o9PC')
+        date = R.text
+        if not("HOURS" in date):
+            print("SKIPPED")
+            return 2
 
     try:
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "zV_Nj"))).click()
@@ -769,7 +774,8 @@ if __name__ == '__main__':
 
 
     batchnr = len(us)
-    batchnr=1
+    #batchnr=1
+
     #setting batchnr to 1 is used for work with one account at a time
 
 
