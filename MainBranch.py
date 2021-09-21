@@ -210,7 +210,8 @@ def GoToLikes(SkipAfter24H = 0):
     if SkipAfter24H == 1:
         R = driver.find_element_by_class_name('_1o9PC')
         date = R.text
-        if not("HOURS" in date):
+        print(date);
+        if not("HOURS" in date or "HOUR" in date):
             print("SKIPPED")
             return 2
 
@@ -565,7 +566,7 @@ def onlogin_callback(api, new_settings_file):
         print('SAVED: {0!s}'.format(new_settings_file))
 
 
-def BatchAdmin(operation,batch):
+def BatchAdmin(operation,batch, numusers):
     inoperation=operation
     length = len(us[batch])
     logging.basicConfig()
@@ -689,7 +690,7 @@ def BatchAdmin(operation,batch):
                 lenusers = len(idsList)
                 isFollowed = api.friendships_show_many(idsList)
 
-                ToFollow = 30
+                ToFollow = numusers
                 for i in range(0,lenusers):
                     if i == lenusers:
                         print("NU A MAI GASIT ____________________________!!!!!!!!!!!!!!!!!!")
@@ -722,7 +723,7 @@ def BatchAdmin(operation,batch):
 
                 Following = api.user_following(userID, rank_token=ud)
                 lnFollowing = len(Following["users"])
-                toUnfollow = 30
+                toUnfollow = numusers
 
                 for i in range(0, lnFollowing):
                     id = Following["users"][i]["pk"]
@@ -791,7 +792,7 @@ if __name__ == '__main__':
     if operation == 1:
         func = MasterChoice
     elif operation==2:
-        func = MasterChoice
+        func = BatchAdmin
     elif operation==3:
         func = MasterChoice
     else:
