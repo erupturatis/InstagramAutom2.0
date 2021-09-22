@@ -211,7 +211,7 @@ def GoToLikes(SkipAfter24H = 0):
         R = driver.find_element_by_class_name('_1o9PC')
         date = R.text
         print(date);
-        if not("HOURS" in date or "HOUR" in date):
+        if not("HOURS" in date or "HOUR" in date or "MINUTES" in date):
             print("SKIPPED")
             return 2
 
@@ -584,7 +584,7 @@ def BatchAdmin(operation,batch, numusers):
             password = ps[batch][i]
             typ = PT[batch][i]
             print(username)
-            time.sleep(2.5+random.random())
+
             try:
                 settings_file = "cookies/settcookie_"+username
                 if not os.path.isfile(settings_file):
@@ -698,10 +698,13 @@ def BatchAdmin(operation,batch, numusers):
                     isp = isFollowed["friendship_statuses"][idsList[i]]['is_private']
                     ot = isFollowed["friendship_statuses"][idsList[i]]['outgoing_request']
                     if isf == False & isp == True & ot == False:
+
                         try:
                             api.friendships_create(idsList[i])
                         except:
-                            todeletcookie = 1
+                            print(username, "GOT ACTION BLOCKED")
+                            break
+
 
 
                         ToFollow-=1
@@ -744,21 +747,23 @@ def BatchAdmin(operation,batch, numusers):
                 print(userID, username)
                 Following = api.user_following(userID, rank_token=ud)
                 lnFollowing = len(Following["users"])
-                toUnfollow = 3
+                toUnfollow = numusers
 
                 for i in range(0, lnFollowing):
                     id = Following["users"][i]["pk"]
+                    print("About to Destroy ", username)
                     api.friendships_destroy(user_id=id)
                     toUnfollow -= 1
                     if toUnfollow <= 0:
                         break
                     time.sleep(1.5 + random.random())
+            time.sleep(2.5 + random.random()) #When finished with one account takes a 2.5 min pause before starting another
         at = time.localtime()
         current_time = time.strftime("%H:%M:%S", at)
         print(current_time, " end ----------------------------------- ")
 
 
-        time.sleep(random.randint(35,40)*60)
+        time.sleep(random.randint(45,50)*60)
 
 
 if __name__ == '__main__':
