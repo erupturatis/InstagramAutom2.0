@@ -210,7 +210,7 @@ def GoToLikes(SkipAfter24H = 0):
     if SkipAfter24H == 1:
         R = driver.find_element_by_class_name('_1o9PC')
         date = R.text
-        print(date);
+        print(date)
         if not("HOURS" in date or "HOUR" in date or "MINUTES" in date):
             print("SKIPPED")
             return 2
@@ -704,9 +704,6 @@ def BatchAdmin(operation,batch, numusers):
                         except:
                             print(username, "GOT ACTION BLOCKED")
                             break
-
-
-
                         ToFollow-=1
                         time.sleep(1.5+random.random())
                     if ToFollow<=0:
