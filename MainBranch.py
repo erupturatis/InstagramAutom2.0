@@ -702,7 +702,7 @@ def BatchAdmin(operation,batch, numusers):
                         try:
                             api.friendships_create(idsList[i])
                         except:
-                            print(username, "GOT ACTION BLOCKED")
+                            print(username, "GOT ACTION BLOCKED -------------------------------------------")
                             break
                         ToFollow-=1
                         time.sleep(1.5+random.random())
