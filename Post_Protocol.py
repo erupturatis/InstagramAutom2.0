@@ -10,7 +10,7 @@ def Post(caption="Rate this 1-10",credit="Credit unkown dm me",hashtags="#", ima
 
     global bot
     image = 'Posts/post'+str(batch)+'.jpg'
-    credit= "\n Reposted from:" + Hp[batch][nr]
+    credit= "\n Reposted from: @" + Hp[batch][nr]
     hashtags = "#"+usernames[batch][nr] + " " + hashtags
     bot.login(username=usernames[batch][nr], password=passwords[batch][nr], is_threaded=True )
     standardSpace="\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n"

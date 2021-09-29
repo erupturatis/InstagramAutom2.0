@@ -208,7 +208,11 @@ def GoToLikes(SkipAfter24H = 0):
         time.sleep(0.5)
         return 0
     if SkipAfter24H == 1:
-        R = driver.find_element_by_class_name('_1o9PC')
+        try:
+            R = driver.find_element_by_class_name('_1o9PC')
+        except:
+            time.sleep(2)
+            R = driver.find_element_by_class_name('_1o9PC')
         date = R.text
         print(date)
         if not("HOURS" in date or "HOUR" in date or "MINUTES" in date):
