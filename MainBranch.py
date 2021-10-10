@@ -171,15 +171,15 @@ def GoToFollowers():
         EC.element_to_be_clickable((By.XPATH, '//div[contains(text(), "following")]'))).click()
 
 def GetFollowers():
-    elements = driver.find_elements_by_class_name('g47SY ')
+    elements = driver.find_elements_by_class_name('g47SY')
     return elements[1].text
 
 def GetFollowing():
-    elements = driver.find_elements_by_class_name('g47SY ')
+    elements = driver.find_elements_by_class_name('g47SY')
     if len(elements)<3:
         time.sleep(5)
     driver.refresh()
-    elements = driver.find_elements_by_class_name('g47SY ')
+    elements = driver.find_elements_by_class_name('g47SY')
     return elements[2].text
 
 def UpdateStats(f,i,j):
@@ -430,7 +430,7 @@ def LoginAndInit(i,j):
 
 def SwitchOrNot():
     GoToProfile()
-    if(TurnToNumber((GetFollowing()))>4000):
+    if(TurnToNumber((GetFollowing()))>1000):
         return UnfollowProtocol
     else:
         return FollowFromHost
@@ -578,7 +578,7 @@ def BatchAdmin(operation,batch, numusers):
     logger.setLevel(logging.WARNING)
     device_id = None
     print(operation, batch, " pppppppppppppppaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-    for w in range(0,10):
+    for w in range(0,15):
         at = time.localtime()
         current_time = time.strftime("%H:%M:%S", at)
         print(current_time, " start ----------------------------------- ")
@@ -641,7 +641,7 @@ def BatchAdmin(operation,batch, numusers):
 
             operation=inoperation
 
-            if lnFollowing > 4000 and operation==2:
+            if lnFollowing > 100 and operation==2:
                 # If you have more than 4k following I will unfollow instead of following
                 operation=4
 
@@ -764,7 +764,7 @@ def BatchAdmin(operation,batch, numusers):
         print(current_time, " end ----------------------------------- ")
 
 
-        time.sleep(random.randint(45,50)*60)
+        time.sleep(random.randint(50,55)*60)
 
 
 if __name__ == '__main__':
